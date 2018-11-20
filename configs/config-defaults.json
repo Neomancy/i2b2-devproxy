@@ -1,0 +1,114 @@
+{
+  "hosting": {
+    "main": {
+      "port": 8001,
+      "proxy": "/~proxy"
+    },
+    "admin": {
+      "port": 8002
+    },
+    "environment": "latest-env"
+  },
+
+
+  "plugins": {
+    "manifests": [ "https://raw.githubusercontent.com/i2b2plugins/i2b2-catalogs/master/i2b2-wc.repo" ],
+    "loaded": {
+    }
+  },
+
+
+  "webclients": {
+    "wc-latest": {
+      "name": "Latest Official Release",
+      "archive": "",
+      "directory": "latest"
+    }
+  },
+
+
+  "i2b2_domains": {
+    "domain-local": {
+      "allowAnalysis": true,
+      "debug": true,
+      "domain": "i2b2demo",
+      "installer": "/webclient/plugin_installer/",
+      "isSHRINE": false,
+      "name": "Local-Docker",
+      "urlCellPM": "https://localhost/i2b2/services/PMService/"
+    },
+    "domain-i2b2.org": {
+      "allowAnalysis": true,
+      "debug": true,
+      "domain": "i2b2demo",
+      "installer": "/webclient/plugin_installer/",
+      "isSHRINE": false,
+      "name": "i2b2.org Demo",
+      "urlCellPM": "http://services.i2b2.org/i2b2/services/PMService/"
+    }
+  },
+
+
+  "overrides": {
+    "i2b2_config_data-V1": {
+      "module": {
+        "bind": "/i2b2_config_data.js",
+        "location": "wc.override.i2b2_config_data.js"
+      }
+    },
+    "i2b2_index_html-V1": {
+      "module": {
+        "bind": "/",
+        "location": "wc.override.index.html.js"
+      }
+    },
+    "i2b2_loader-V1": {
+      "module": {
+        "bind": "/js-i2b2/i2b2_loader.js",
+        "location": "wc.override.i2b2_loader.js"
+      }
+    },
+    "i2b2_cell_config_data-V1": {
+      "module": {
+        "bind": "/^\\/js-i2b2\\/.*\\/cell_config_data\\.js$/m",
+        "location": "wc.override.cell_config_data.js"
+      }
+    },
+    "plugin-overlay-V1": {
+      "module": {
+        "bind": "/^\\/js-i2b2\\/cells\\/plugins\\//m",
+        "location": "wc.override.cells.js"
+      }
+    }
+  },
+
+
+  "environments": {
+    "latest-env": {
+      "description": "latest web client environment from Github",
+      "webclient": "wc-latest",
+      "overrides": {
+        "i2b2_config_data-V1": {
+          "replace_locations": {
+            "start": "lstDomains",
+            "end": "//-"
+          },
+          "domains": ["DOMAIN_1","DOMAIN_2"]
+        },
+        "i2b2_cell_config_data-V1": {
+          "stuff": "this is configuration data"
+        },
+        "i2b2_loader-V1": {
+          "load_base": true,
+          "replace_locations": {
+            "start": "i2b2.hive.tempCellsList",
+            "end": ";"
+          },
+          "load_plugins": {}
+        }
+      }
+    }
+  }
+
+
+}

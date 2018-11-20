@@ -1,0 +1,6 @@
+.idea/*
+downloads/*
+hosting/plugins/*
+hosting/wc-core/*
+node_modules/
+npm-debug.log*

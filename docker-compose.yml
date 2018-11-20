@@ -1,0 +1,69 @@
+version: '3'
+networks:
+    i2b2net:
+       driver: bridge
+
+services:
+
+  ### the official i2b2 postgresql image
+  i2b2-pg:
+    image: i2b2/i2b2-pg
+    networks:
+      - i2b2net
+      - public
+    ports:
+      - "5432:5432"
+
+  ### the official i2b2 server image
+  i2b2-wildfly:
+    image: i2b2/i2b2-wildfly
+    networks:
+      - i2b2net
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    depends_on:
+      - i2b2-pg
+
+  ### the official i2b2 webclient server image
+  i2b2-web:
+    image: i2b2/i2b2-web
+    networks:
+      - i2b2net
+      - public
+    ports:
+      - "80:80"
+      - "443:443"
+    command: /run-httpd.sh localhost
+    depends_on:
+      - i2b2-wildfly
+
+  ### thei2b2 development web proxy server
+  i2b2-devproxy:
+    build: .
+    networks:
+      - i2b2net
+      - public
+    ports:
+    - "5000:5000"
+    volumes:
+    - .:/code
+    - logvolume01:/var/log
+    links:
+    - redis
+    volumes:
+      logvolume01: {}
+    depends_on:
+      - i2b2-web
+
+
+networks:
+  public:
+    driver: bridge
+    external: true
+  i2b2internal:
+    driver: bridge
+    name: i2b2-hive-net
+  i2b2dmz:
+    driver: bridge
+    name: i2b2-web-dmz
